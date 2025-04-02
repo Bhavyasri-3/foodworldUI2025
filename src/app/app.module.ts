@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule} from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
@@ -38,6 +38,10 @@ import { OrderDetailsComponent } from './order-details/order-details.component';
 import { ViewOrdersComponent } from './view-orders/view-orders.component';
 import { WelcomePageComponent } from './welcome-page/welcome-page.component';
 import { SpinnerComponent } from './spinner/spinner.component';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
+import { CustomInterceptor } from './services/custom.interceptor';
 
 @NgModule({
   declarations: [
@@ -82,9 +86,18 @@ import { SpinnerComponent } from './spinner/spinner.component';
     MatPaginatorModule,
     MatTableModule,
     RouterModule,
-    MatBadgeModule
+    MatBadgeModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatButtonToggleModule
   ],
-  providers: [],
+  providers: [ 
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: CustomInterceptor,
+      multi:true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

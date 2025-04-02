@@ -9,6 +9,8 @@ import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CartService } from '../services/cart.service';
+import { MatDatepickerInputEvent } from '@angular/material/datepicker';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 
 
@@ -17,28 +19,39 @@ import { CartService } from '../services/cart.service';
   templateUrl: './order-details.component.html',
   styleUrls: ['./order-details.component.css']
 })
-export class OrderDetailsComponent implements OnInit{
+export class OrderDetailsComponent implements OnInit {
   isAdminLoggedin: any;
-  userName : any;
+  userName: any;
   isLoading: boolean = false;
-  orderItems:any[] = [];
-  displayedColumns: string[]=[
+  selectedFilter!: string;
+  startDate: Date | null = null;
+  endDate: Date | null = null;
+
+  today: Date = new Date();
+  orderItems: any[] = [];
+  displayedColumns: string[] = [
     "tableNumber",
     "orderStatus",
     "orderAction",
     "actions",
   ]
-  
+  dateForm = new FormGroup({
+    startDate: new FormControl<Date | null>(null, Validators.required),
+    endDate: new FormControl<Date | null>(null, Validators.required)
+  })
 
-  dataSource!:MatTableDataSource<any>;
+  dataSource!: MatTableDataSource<any>;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private homeService:HomeService, private dialog:MatDialog,
-    private authService:AuthService,private router:Router, private http : HttpClient, private cartService : CartService){}
+  constructor(private homeService: HomeService, private dialog: MatDialog,
+    private authService: AuthService, private router: Router, private http: HttpClient, private cartService: CartService) {
+    this.dateForm.controls.startDate.valueChanges.subscribe(() => this.validateDates());
+    this.dateForm.controls.endDate.valueChanges.subscribe(() => this.validateDates());
+  }
 
-  ngOnInit(){
+  ngOnInit() {
     this.isAdminLoggedin = sessionStorage.getItem('isAdminLoggedIn')
     const username = sessionStorage.getItem('username');
     if (username) {
@@ -47,56 +60,144 @@ export class OrderDetailsComponent implements OnInit{
       console.log('No username found in sessionStorage.');
     }
 
-    if(this.isAdminLoggedin === 'true'){
+    if (this.isAdminLoggedin === 'true') {
       this.loadOrderDetails();
-    }else{      
-    this.getOrderDetailsByUserName();
+    } else {
+      this.getOrderDetailsByUserName();
     }
   }
 
-  loadOrderDetails(){
+  loadOrderDetails() {
     this.isLoading = true;
     this.homeService.getOrderDetails().subscribe({
-      next:(res)=>{
-        this.isLoading=false;
-        console.log("getOrderDetails",res);
-        
+      next: (res) => {
+        this.isLoading = false;
+        console.log("getOrderDetails", res);
+
         this.dataSource = new MatTableDataSource(res);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
       },
-      error:(err)=>{
+      error: (err) => {
         console.log(err);
-        
+
       }
     })
   }
 
-  applyFilter(event:Event){
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-    if(this.dataSource.paginator){
-      this.dataSource.paginator.firstPage();
+  onFilterChange(filter: string) {
+    console.log("selectedFilter", this.selectedFilter);
+    this.selectedFilter = filter;
+    if (this.selectedFilter !== 'custom') {
+      this.fetchFilterOrders();
+    }
+  }
+  formatDate(date: Date): string {
+    if (!date) return '';
+
+  const offset = date.getTimezoneOffset() * 60000;
+  const localDate = new Date(date.getTime() - offset);
+
+  return localDate.toISOString().split('T')[0];
+  }
+
+  fetchFilterOrders() {
+    this.isLoading = true;
+    let params: any = {};
+    const today = new Date();
+
+    switch (this.selectedFilter) {
+      case 'day':
+        params.startDate = this.formatDate(today);
+        params.endDate = this.formatDate(today);
+        break;
+
+      case 'week':
+        let lastweek = new Date();
+        lastweek.setDate(today.getDate() - 7);
+        params.startDate = this.formatDate(lastweek);
+        params.endDate = this.formatDate(today);
+        break;
+
+      case 'month':
+        let lastmonth = new Date();
+        lastmonth.setDate(today.getDate() - 30);
+        params.startDate = this.formatDate(lastmonth);
+        params.endDate = this.formatDate(today);
+        break;
+
+      case 'custom':
+        const startDate = this.dateForm.controls.startDate.value;
+        const endDate = this.dateForm.controls.endDate.value;
+
+
+        console.log("Raw Start Date:", startDate);
+        console.log("Raw End Date:", endDate);
+
+        if (!startDate || !endDate) {
+          alert("Please select both start and end dates");
+          this.isLoading = false;
+          break;
+        }
+        params.startDate = this.formatDate(startDate);
+        params.endDate = this.formatDate(endDate);
+
+        console.log("Formatted Start Date:", params.startDate);
+        console.log("Formatted End Date:", params.endDate);
+        break;
+    }
+    console.log("Final Params:",params);
+    this.homeService.getFilteredOrders(params).subscribe({
+      next: (res) => {
+        this.isLoading = false;
+        console.log("Filtered orders:", res);
+        this.dataSource = new MatTableDataSource(res);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+      },
+      error: (err) => {
+        console.error("Error fetching filtered orders:", err);
+        this.isLoading = false;
+
+      }
+    })
+  }
+
+
+  validateDates() {
+    const startDate = this.dateForm.controls.startDate.value;
+    const endDate = this.dateForm.controls.endDate.value;
+
+    this.dateForm.controls.startDate.setErrors(null);
+    this.dateForm.controls.endDate.setErrors(null);
+
+    if (startDate && endDate) {
+      if (new Date(startDate) > new Date(endDate)) {
+        this.dateForm.controls.startDate.setErrors({ invalidStart: true });
+      }
+      if (new Date(endDate) > this.today) {
+        this.dateForm.controls.endDate.setErrors({ invalidEnd: true });
+      }
     }
   }
 
-  deleteOrderDetails(id:number){
+  deleteOrderDetails(id: number) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent)
-    dialogRef.afterClosed().subscribe((confirm)=>{
-      if(confirm){
+    dialogRef.afterClosed().subscribe((confirm) => {
+      if (confirm) {
         this.isLoading = true;
         this.homeService.deleteOrder(id).subscribe({
-          next:(res)=>{
-            this.isLoading= false;
+          next: (res) => {
+            this.isLoading = false;
             this.authService.openSnackBar("Order Deleted Successfully")
             this.loadOrderDetails();
           }
         })
-      }else{
+      } else {
         this.authService.openSnackBar("Delete Action canceled", "cancel")
       }
     })
-    
+
   }
 
   openEditOrderDetails(orderId: number) {
@@ -106,7 +207,7 @@ export class OrderDetailsComponent implements OnInit{
         this.orderItems = order;
         // Transform the backend response
 
-        const transformedItems = this.orderItems.map((item:any) => ({
+        const transformedItems = this.orderItems.map((item: any) => ({
           categoryName: item.categoryName,
           count: item.quantity, // Map 'quantity' to 'count'
           itemId: item.itemId,
@@ -117,37 +218,38 @@ export class OrderDetailsComponent implements OnInit{
           tableNumber: item.tableNumber,
           orderId: item.orderId
         }));
-  
+
         console.log('Transformed order items:', transformedItems);
-  
+
         // Save transformed items to storage
-        this.cartService.saveCartToStorage(transformedItems); 
-        this.router.navigate(['/home'],{queryParams:{orderId}}).then(() => {
+        this.cartService.saveCartToStorage(transformedItems);
+        this.router.navigate(['/home'], { queryParams: { orderId } }).then(() => {
           window.location.reload();
         });
       },
-      error: (err:any) => {
+      error: (err: any) => {
         console.error('Error fetching order details:', err);
       }
     });
   }
-  
 
-  viewOrders(orderId:number){
-    this.router.navigate(['view-orders'],{queryParams:{orderId}})
+
+  viewOrders(orderId: number) {
+    this.router.navigate(['view-orders'], { queryParams: { orderId } })
   }
 
-  getOrderDetailsByUserName(){
-    console.log("getOrderDetailsByUserName method called",this.userName);
+  getOrderDetailsByUserName() {
+    console.log("getOrderDetailsByUserName method called", this.userName);
     this.homeService.getOrderDetailsByUserName(this.userName).subscribe({
-      next:(res)=>{
-        console.log("getOrderDetailsByUserName",res);
+      next: (res) => {
+        console.log("getOrderDetailsByUserName", res);
         this.dataSource = new MatTableDataSource(res);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
       },
-      error:(err)=>{
+      error: (err) => {
         console.log(err);
+      }
+    })
   }
-})}
 }

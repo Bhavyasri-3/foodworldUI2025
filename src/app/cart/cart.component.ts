@@ -99,7 +99,7 @@ export class CartComponent implements OnInit {
           if (res) {
             this.authService.openSnackBar("Order Details Updated Successfully");
             this.cartService.clearCart();
-            localStorage.clear();
+            localStorage.removeItem('cartItems');
             this.router.navigate(['/order-details']);
           }
         },
@@ -116,7 +116,7 @@ export class CartComponent implements OnInit {
           if (res) {
             this.authService.openSnackBar("Order Details Added Successfully");
             this.cartService.clearCart();
-            localStorage.clear();
+            localStorage.removeItem('cartItems');
             this.router.navigate(['/order-details']);
           }
         },

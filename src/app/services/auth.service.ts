@@ -16,12 +16,28 @@ export class AuthService {
     })
   }
 
+  validateToken(token:string):Observable<boolean>{
+    // const bearerToken = "Bearer "+token;
+    return this._http.post<boolean>('http://localhost:8080/api/validate-token', { token });
+  }
+  isAuthenticated(): Observable<boolean> {
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      return new Observable<boolean>((observer) => {
+        observer.next(false);
+        observer.complete();
+      });
+    }
+
+    return this.validateToken(token);
+  }
   addUser(data: any):Observable<any>{
     return this._http.post('http://localhost:8080/api/users',data)
   }
 
   getUsers():Observable<any>{
-    return this._http.get('http://localhost:3000/user')
+    return this._http.get('http://localhost:8080/api/users');
   }
 
   updateUserDetails(id:number,data:any):Observable<any>{

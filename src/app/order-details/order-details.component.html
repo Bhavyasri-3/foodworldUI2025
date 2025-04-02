@@ -2,10 +2,45 @@
 <app-navbar></app-navbar>
 <div class="main-body">
     <h1>Order Details</h1>
-    <mat-form-field>
-        <mat-label>Filter</mat-label>
-        <input matInput #input (keyup)="applyFilter($event)">
-    </mat-form-field>
+    <div class="header" *ngIf="isAdminLoggedin">
+        <mat-form-field appearance="outline" class="custom-filter">
+            <mat-label>Filter by Date</mat-label>
+            <mat-select [(value)]="selectedFilter" (selectionChange)="onFilterChange($event.value)">
+                <mat-option value="day">Today</mat-option>
+                <mat-option value="week">This Week</mat-option>
+                <mat-option value="month">This Month</mat-option>
+                <mat-option value="custom">Custom</mat-option>
+            </mat-select>
+        </mat-form-field>
+            
+        <div [formGroup]="dateForm" *ngIf="selectedFilter === 'custom'" class="custom-date-filter">
+            <!-- Start Date -->
+            <mat-form-field appearance="outline" class="date-field">
+                <mat-label>Start Date</mat-label>
+                <input matInput [matDatepicker]="picker1" formControlName="startDate">
+                <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                <mat-datepicker #picker1></mat-datepicker>
+                <mat-error *ngIf="dateForm.controls.startDate.hasError('invalidStart')">
+                    Start Date cannot be after End Date.
+                </mat-error>
+            </mat-form-field>
+        
+            <!-- End Date -->
+            <mat-form-field appearance="outline" class="date-field">
+                <mat-label>End Date</mat-label>
+                <input matInput [matDatepicker]="picker2" formControlName="endDate">
+                <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                <mat-datepicker #picker2></mat-datepicker>
+                <mat-error *ngIf="dateForm.controls.endDate.hasError('invalidEnd')">
+                    End Date cannot be greater than today.
+                </mat-error>
+            </mat-form-field>
+        
+            <button mat-raised-button color="primary" (click)="fetchFilterOrders()" [disabled]="dateForm.invalid">Go</button>
+        </div>
+    </div>
+    
+    
 
     <div class="mat-elevation-z8">
         <table mat-table [dataSource]="dataSource" matSort>
@@ -39,7 +74,7 @@
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row;columns: displayedColumns"></tr>
             <tr class="mt-row" *matNoDataRow>
-                <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
+                <!-- <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td> -->
             </tr>
         </table>
         <mat-paginator [pageSizeOptions]="[5,10,25,100]" aria-label="Select page of users"></mat-paginator>

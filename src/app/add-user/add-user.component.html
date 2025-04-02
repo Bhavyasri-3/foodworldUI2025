@@ -24,12 +24,22 @@
                 <mat-error *ngIf="userForm.get('username')?.hasError('required')">Username is required</mat-error>
                 <mat-error *ngIf="userForm.get('username')?.hasError('minlength')">Invalid Username</mat-error>
             </mat-form-field>
-            <mat-form-field appearance="outline">
+            <!-- <mat-form-field appearance="outline">
                 <mat-label>Password</mat-label>
                 <input type="password" matInput placeholder="Enter Password" formControlName="password">
                 <mat-error *ngIf="userForm.get('password')?.hasError('required')">Password is required</mat-error>
                 <mat-error *ngIf="userForm.get('password')?.hasError('pattern')">Invalid Password</mat-error>
+            </mat-form-field> -->
+            <mat-form-field appearance="outline">
+                <mat-label>Password</mat-label>
+                <input [type]="hidePassword ? 'password' : 'text'" matInput placeholder="Enter Password" formControlName="password">
+                <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
+                    <mat-icon>{{ hidePassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+                </button>
+                <mat-error *ngIf="userForm.get('password')?.hasError('required')">Password is required</mat-error>
+                <mat-error *ngIf="userForm.get('password')?.hasError('pattern')">Invalid Password</mat-error>
             </mat-form-field>
+            
         </div>  
         <div class="row">
             <mat-form-field appearance="outline">

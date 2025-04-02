@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { AddUserComponent } from './add-user/add-user.component';
 import { HomeService } from './services/home.service';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -11,23 +12,16 @@ import { HomeService } from './services/home.service';
 })
 export class AppComponent{
   title = 'Rest-App';
-  // ismenurequired=false;
-  // username:string='';
-  // isAdminLoggedin:boolean = false;
-  constructor(private router:Router,
-    private homeService:HomeService,
-  private cdr: ChangeDetectorRef){
-    // this.username = sessionStorage.getItem('username') || '';
-    // this.isAdminLoggedin = sessionStorage.getItem('isAdminLoggedIn') === 'true';
+  isAuthenticated:boolean = false;
+  constructor( private authService:AuthService){
   }
-  // ngDoCheck(): void {
-  //  const currentUrl = this.router.url;
-  //  if(currentUrl=='/login' || currentUrl=='/register' || currentUrl =='/user-details'){
-  //   this.ismenurequired=false
-  //  }else{
-  //   this.ismenurequired=true;
-  //  }
-  // }  
+ 
+  ngOnInit(){
+    this.authService.isAuthenticated().subscribe((valid)=>{
+      this.isAuthenticated = valid;
+      
+    })
+  }
     
     
 }

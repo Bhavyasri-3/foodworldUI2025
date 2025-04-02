@@ -2,20 +2,22 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { JwtService } from '../services/jwt.service';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit{
+export class LoginComponent implements OnInit {
 
   loginForm!: FormGroup;
+  username: string | null = null;
   userdata: any;
   isAdminLoggedIn = false;
   isLoading: boolean = false;
   constructor(private fb: FormBuilder, private router: Router,
-    private _auth: AuthService) {
+    private _auth: AuthService, private jwtService: JwtService) {
     sessionStorage.clear();
     localStorage.clear();
   }
@@ -42,14 +44,22 @@ export class LoginComponent implements OnInit{
         next: (res) => {
           this.isLoading = false;
           if (res) {
-            this.userdata = res;
-            if (this.userdata.username === 'admin123') {
+            // this.userdata = res;
+            localStorage.setItem('Token', res.token)
+            const token = localStorage.getItem('Token');
+            if (token) {
+              this.username = this.jwtService.getUsernameFromToken(token)
+              console.log("Extracted Username:", this.username);
+            } else {
+              console.log("No JWT Token found.");
+            }
+            if (this.username === 'admin123') {
               this.isAdminLoggedIn = true;
               sessionStorage.setItem('username', this.loginForm.value.username);
               sessionStorage.setItem('isAdminLoggedIn', 'true');
               this._auth.openSnackBar("Admin Login Successfully");
               this.router.navigate(['/welcome']).then(() => {
-                window.location.reload();
+                // window.location.reload();
               });
             } else {
               sessionStorage.setItem('username', this.loginForm.value.username);
@@ -76,5 +86,5 @@ export class LoginComponent implements OnInit{
       this._auth.openSnackBar("Please fill in all required fields", "Try Again");
     }
   }
-  
+
 }

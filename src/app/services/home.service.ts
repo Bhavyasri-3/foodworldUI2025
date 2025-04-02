@@ -104,4 +104,9 @@ getOrderItems(id:number):Observable<any>{
   getTableNumbers():Observable<any>{
     return this.http.get(`${this.apiUrl}/tables`)
   }
+
+  getFilteredOrders(params: any): Observable<any> {
+    return this.http.get(`${this.apiUrl}/orders/between`, { params });
+  }
+  
 }
