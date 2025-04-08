@@ -59,7 +59,7 @@ export class LoginComponent implements OnInit {
               sessionStorage.setItem('isAdminLoggedIn', 'true');
               this._auth.openSnackBar("Admin Login Successfully");
               this.router.navigate(['/welcome']).then(() => {
-                // window.location.reload();
+                window.location.reload();
               });
             } else {
               sessionStorage.setItem('username', this.loginForm.value.username);

@@ -18,10 +18,10 @@ export class AuthService {
 
   validateToken(token:string):Observable<boolean>{
     // const bearerToken = "Bearer "+token;
-    return this._http.post<boolean>('http://localhost:8080/api/validate-token', { token });
+    return this._http.post<boolean>('http://localhost:8080/api/validate-token',token);
   }
   isAuthenticated(): Observable<boolean> {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('Token');
     
     if (!token) {
       return new Observable<boolean>((observer) => {

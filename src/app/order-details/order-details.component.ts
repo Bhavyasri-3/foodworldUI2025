@@ -9,7 +9,6 @@ import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CartService } from '../services/cart.service';
-import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 
@@ -26,7 +25,10 @@ export class OrderDetailsComponent implements OnInit {
   selectedFilter!: string;
   startDate: Date | null = null;
   endDate: Date | null = null;
-
+  filteredOrders: any[] = [];
+  totalPrice:number = 0;
+  isFilterApplied:boolean = false;
+  showFooter:boolean =false;
   today: Date = new Date();
   orderItems: any[] = [];
   displayedColumns: string[] = [
@@ -35,6 +37,8 @@ export class OrderDetailsComponent implements OnInit {
     "orderAction",
     "actions",
   ]
+  footerColumns: string[] = ['totalOrdersFooter', 'totalPriceFooter'];
+  
   dateForm = new FormGroup({
     startDate: new FormControl<Date | null>(null, Validators.required),
     endDate: new FormControl<Date | null>(null, Validators.required)
@@ -130,10 +134,6 @@ export class OrderDetailsComponent implements OnInit {
         const startDate = this.dateForm.controls.startDate.value;
         const endDate = this.dateForm.controls.endDate.value;
 
-
-        console.log("Raw Start Date:", startDate);
-        console.log("Raw End Date:", endDate);
-
         if (!startDate || !endDate) {
           alert("Please select both start and end dates");
           this.isLoading = false;
@@ -141,16 +141,15 @@ export class OrderDetailsComponent implements OnInit {
         }
         params.startDate = this.formatDate(startDate);
         params.endDate = this.formatDate(endDate);
-
-        console.log("Formatted Start Date:", params.startDate);
-        console.log("Formatted End Date:", params.endDate);
         break;
     }
-    console.log("Final Params:",params);
+  
     this.homeService.getFilteredOrders(params).subscribe({
       next: (res) => {
         this.isLoading = false;
-        console.log("Filtered orders:", res);
+        this.filteredOrders = res;
+        this.totalPrice = this.calculateTotalPrice(res);
+        this.showFooter = this.filteredOrders.length > 0;
         this.dataSource = new MatTableDataSource(res);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
@@ -163,7 +162,23 @@ export class OrderDetailsComponent implements OnInit {
     })
   }
 
-
+  calculateTotalPrice(orders: any[]):number{
+    let total = 0;
+  
+    for(const order of orders){
+      if(order.orderItems && Array.isArray(order.orderItems)){
+        for(const item of order.orderItems){
+          const price = parseFloat(item.itemPrice);
+          const quantity = item.quantity || 1;
+          total += price * quantity; 
+        }
+      }
+    }
+    const gst = total * 0.05;
+    const totalWithGst = total +gst;
+  
+    return parseFloat(totalWithGst.toFixed(2));
+  }
   validateDates() {
     const startDate = this.dateForm.controls.startDate.value;
     const endDate = this.dateForm.controls.endDate.value;

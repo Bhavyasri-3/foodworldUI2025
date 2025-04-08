@@ -16,7 +16,7 @@
         <div [formGroup]="dateForm" *ngIf="selectedFilter === 'custom'" class="custom-date-filter">
             <!-- Start Date -->
             <mat-form-field appearance="outline" class="date-field">
-                <mat-label>Start Date</mat-label>
+                <mat-label>From</mat-label>
                 <input matInput [matDatepicker]="picker1" formControlName="startDate">
                 <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
                 <mat-datepicker #picker1></mat-datepicker>
@@ -27,7 +27,7 @@
         
             <!-- End Date -->
             <mat-form-field appearance="outline" class="date-field">
-                <mat-label>End Date</mat-label>
+                <mat-label>To</mat-label>
                 <input matInput [matDatepicker]="picker2" formControlName="endDate">
                 <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
                 <mat-datepicker #picker2></mat-datepicker>
@@ -71,11 +71,22 @@
                     </button>
                 </td>
             </ng-container>
+            <ng-container matColumnDef="totalOrdersFooter">
+                <td mat-footer-cell *matFooterCellDef colspan="2">
+                  <strong class="summary-label">Total Orders:</strong>
+                  <span class="summary-value">{{ filteredOrders.length }}</span>
+                </td>
+              </ng-container>
+              
+              <ng-container matColumnDef="totalPriceFooter">
+                <td mat-footer-cell *matFooterCellDef colspan="2">
+                  <strong class="summary-label">Total Price (incl. GST):</strong>
+                  <span class="summary-value">₹{{ totalPrice }}</span>
+                </td>
+              </ng-container>
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row;columns: displayedColumns"></tr>
-            <tr class="mt-row" *matNoDataRow>
-                <!-- <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td> -->
-            </tr>
+            <tr mat-footer-row *matFooterRowDef="showFooter ? footerColumns : []"></tr>
         </table>
         <mat-paginator [pageSizeOptions]="[5,10,25,100]" aria-label="Select page of users"></mat-paginator>
     </div>
