@@ -20,6 +20,8 @@ export class JwtService {
       }
 
       const payload = atob(tokenParts[1]); // Decode base64 payload
+      console.log("payload",payload);
+      
       return JSON.parse(payload); // Convert JSON string to object
 
     } catch (error) {
