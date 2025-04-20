@@ -25,7 +25,7 @@ pipeline {
         }
         stage('Build'){
             steps{
-                bat 'ng build --configuration=production'
+                bat 'npx ng build --configuration=production'
             }
         }
         stage('Deploy to Render'){
