@@ -18,26 +18,26 @@ pipeline {
 
         stage('Install Dependencies'){
             steps{
-                sh 'npm ci'
+                bat 'npm ci'
             }
         
         }
 
         stage('Lint'){
             steps{
-                sh 'npm run lint || echo "Lint warnings"'
+                bat 'npm run lint || echo "Lint warnings"'
             }
         }
 
         stage('Build'){
             steps{
-                sh 'ng build --configuration=production'
+                bat 'ng build --configuration=production'
             }
         }
 
         stage('Deploy to Render'){
             steps{
-                sh "curl -X POST $RENDER_DEPLOY_HOOK"
+                bat "curl -X POST $RENDER_DEPLOY_HOOK"
             }
         }
     }   
