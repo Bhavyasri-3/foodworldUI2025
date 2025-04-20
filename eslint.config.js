@@ -14,6 +14,9 @@ module.exports = tseslint.config(
     ],
     processor: angular.processInlineTemplates,
     rules: {
+      "@typescript-eslint/no-explicit-any":"off",
+      "@typescript-eslint/no-unused-vars":"warn",
+      "@typescript-eslint/no-empty-function":'warn',
       "@angular-eslint/directive-selector": [
         "error",
         {
