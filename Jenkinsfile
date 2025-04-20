@@ -1,14 +1,59 @@
-// pipeline {
-//     agent any
-//     tools {
-//         nodejs "Node 18"
-//     }
+pipeline {
+    agent any
+    tools {
+        nodejs "Node 18"
+    }
 
-//     triggers {
-//         cron('* * * * *')
-//     }
+    triggers {
+        cron('* * * * *')
+    }
 
-//     environment {
-//         RENDER_DEPLOY_HOOK = ''
-//     }
-// }
+    environment {
+        RENDER_DEPLOY_HOOK = 'https://api.render.com/deploy/srv-d02akf3e5dus73bj8b50?key=tKZT2bA5n2Q'
+    }
+
+    stages {
+        stage('Checkout'){
+            steps{
+                git 'https://github.com/Bhavyasri-3/foodworldUI2025.git'
+            }
+        }
+
+        stage('Install Dependencies'){
+            steps{
+                sh 'npm ci'
+            }
+        
+        }
+
+        stage('Lint'){
+            steps{
+                sh 'npm run lint || echo "Lint warnings"'
+            }
+        }
+
+        stage('Build'){
+            steps{
+                sh 'ng build --configuration=production'
+            }
+        }
+
+        stage('Deploy to Render'){
+            steps{
+                sh "curl -X POST $RENDER_DEPLOY_HOOK"
+            }
+        }
+    }   
+
+
+post {
+    success{
+        echo "✅ Build and deployement successful!"
+    }
+    failure {
+        echo "❌ Build or deployement failed."
+    }
+
+}
+
+}
