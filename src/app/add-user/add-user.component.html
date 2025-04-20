@@ -32,7 +32,7 @@
             </mat-form-field> -->
             <mat-form-field appearance="outline">
                 <mat-label>Password</mat-label>
-                <input [type]="hidePassword ? 'password' : 'text'" matInput placeholder="Enter Password" formControlName="password">
+                <input matInput [type]="hidePassword ? 'password' : 'text'" matInput placeholder="Enter Password" formControlName="password">
                 <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
                     <mat-icon>{{ hidePassword ? 'visibility' : 'visibility_off' }}</mat-icon>
                 </button>

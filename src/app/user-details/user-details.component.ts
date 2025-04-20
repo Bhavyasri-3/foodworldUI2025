@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { AddUserComponent } from '../add-user/add-user.component';
 import {MatTableDataSource } from '@angular/material/table';
@@ -11,8 +11,8 @@ import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.compone
   templateUrl: './user-details.component.html',
   styleUrls: ['./user-details.component.css']
 })
-export class UserDetailsComponent {
-  isLoading: boolean = false;
+export class UserDetailsComponent implements OnInit {
+  isLoading = false;
 displayedColumns: string[]=[
       "name",
       "contact",

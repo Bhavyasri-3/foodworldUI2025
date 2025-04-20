@@ -21,14 +21,14 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 export class OrderDetailsComponent implements OnInit {
   isAdminLoggedin: any;
   userName: any;
-  isLoading: boolean = false;
+  isLoading = false;
   selectedFilter!: string;
   startDate: Date | null = null;
   endDate: Date | null = null;
   filteredOrders: any[] = [];
-  totalPrice:number = 0;
-  isFilterApplied:boolean = false;
-  showFooter:boolean =false;
+  totalPrice = 0;
+  isFilterApplied = false;
+  showFooter =false;
   today: Date = new Date();
   orderItems: any[] = [];
   displayedColumns: string[] = [
@@ -50,7 +50,7 @@ export class OrderDetailsComponent implements OnInit {
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(private homeService: HomeService, private dialog: MatDialog,
-    private authService: AuthService, private router: Router, private http: HttpClient, private cartService: CartService) {
+    private authService: AuthService, private router: Router, private cartService: CartService) {
     this.dateForm.controls.startDate.valueChanges.subscribe(() => this.validateDates());
     this.dateForm.controls.endDate.valueChanges.subscribe(() => this.validateDates());
   }
@@ -107,7 +107,7 @@ export class OrderDetailsComponent implements OnInit {
 
   fetchFilterOrders() {
     this.isLoading = true;
-    let params: any = {};
+    const params: any = {};
     const today = new Date();
 
     switch (this.selectedFilter) {
@@ -117,14 +117,14 @@ export class OrderDetailsComponent implements OnInit {
         break;
 
       case 'week':
-        let lastweek = new Date();
+        const lastweek = new Date();
         lastweek.setDate(today.getDate() - 7);
         params.startDate = this.formatDate(lastweek);
         params.endDate = this.formatDate(today);
         break;
 
       case 'month':
-        let lastmonth = new Date();
+        const lastmonth = new Date();
         lastmonth.setDate(today.getDate() - 30);
         params.startDate = this.formatDate(lastmonth);
         params.endDate = this.formatDate(today);

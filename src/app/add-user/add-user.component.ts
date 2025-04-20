@@ -10,7 +10,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 })
 export class AddUserComponent implements OnInit {
   userForm!:FormGroup;
-  hidePassword: boolean = true;
+  hidePassword = true;
 
 constructor(private _dialogRef:MatDialogRef<AddUserComponent>,
   private fb:FormBuilder, private authService:AuthService,

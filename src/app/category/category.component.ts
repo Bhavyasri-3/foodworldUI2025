@@ -1,6 +1,6 @@
 
 
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HomeService } from '../services/home.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -12,14 +12,14 @@ import { AuthService } from '../services/auth.service';
   templateUrl: './category.component.html',
   styleUrls: ['./category.component.css']
 })
-export class CategoryComponent {
+export class CategoryComponent implements OnInit {
   categoryTitle !: string;
-  categoryStatus : boolean = false;
+  categoryStatus  = false;
   file!:File;
   selected !: string;
   categoryForm!:FormGroup;
   existingCategoryItems: string[] =[];
-  categoryId:number = 0;
+  categoryId = 0;
   isEditMode:any;
   constructor(private fb:FormBuilder,private homeService:HomeService, private dialogRef:MatDialogRef<CategoryComponent>,
       private authService:AuthService, @Inject(MAT_DIALOG_DATA) public data:any) {
@@ -38,14 +38,16 @@ export class CategoryComponent {
         
       }
     })
-    if (this.data) {
-      this.categoryForm.patchValue(this.data)
-    }
+    
     this.categoryForm = this.fb.group({
       categoryStatus:[true ,Validators.required],
       categoryTitle:['',[Validators.required,this.validateAlreadyExistingcategory.bind(this)]],
       img:[''],
     })
+
+    if (this.data) {
+      this.categoryForm.patchValue(this.data)
+    }
   }
 
   validateAlreadyExistingcategory(control: AbstractControl){

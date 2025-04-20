@@ -1,7 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, DoCheck } from '@angular/core';
 import { HomeService } from '../services/home.service';
 import { MatDialog } from '@angular/material/dialog';
-import { AddUserComponent } from '../add-user/add-user.component';
 import { CategoryComponent } from '../category/category.component';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -17,13 +16,13 @@ interface CategoryItems {
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, DoCheck {
   foodItemsArray: any = [];
   catagoryItems: CategoryItems[] = [];
   ismenurequired=false;
-  username:string='';
+  username='';
   isAdminLoggedin :any;
-  isLoading: boolean = false;
+  isLoading = false;
   constructor(
     private homeService: HomeService,
     private _dialog: MatDialog,
@@ -67,7 +66,7 @@ export class HomeComponent implements OnInit {
               }
             }
           })
-  }
+        }
 
 editCategoryForm(id:number){
   const data = this.foodItemsArray[id];

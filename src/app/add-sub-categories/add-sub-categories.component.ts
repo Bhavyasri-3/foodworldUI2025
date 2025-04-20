@@ -11,12 +11,12 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 })
 export class AddSubCategoriesComponent implements OnInit {
   subCategoriesForm!: FormGroup;
-  selected: boolean = false;
+  selected = false;
   selectedFile!: File;
   categoryName: string;
-  isEditMode: boolean = false;
+  isEditMode = false;
   existingItems: string[]=[];
-  isLoading: boolean = false;
+  isLoading = false;
   constructor(private fb: FormBuilder,
     private dialogRef: MatDialogRef<AddSubCategoriesComponent>,
     private homeService: HomeService, private authService: AuthService,
@@ -36,7 +36,7 @@ export class AddSubCategoriesComponent implements OnInit {
         this.existingItems = res.map((items:any)=>items.itemName.toLowerCase());
       },
       error:(err)=>{
-        console.log("Failed to fetch Items Data");
+        console.log("Failed to fetch Items Data",err);
         
       }
     })

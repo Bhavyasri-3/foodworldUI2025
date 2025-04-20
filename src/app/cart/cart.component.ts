@@ -21,8 +21,8 @@ export class CartComponent implements OnInit {
   quantity: number[] = [];
   orderId: string | null = null;
   tableStatus: boolean | null = null;
-  isTableSelected: boolean = false; // This will control whether the dropdown is disabled or not
-  isLoading: boolean = false;
+  isTableSelected = false; // This will control whether the dropdown is disabled or not
+  isLoading = false;
   createdBy : any;
 
   constructor(

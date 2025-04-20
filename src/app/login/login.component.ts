@@ -15,7 +15,7 @@ export class LoginComponent implements OnInit {
   username: string | null = null;
   userdata: any;
   isAdminLoggedIn = false;
-  isLoading: boolean = false;
+  isLoading = false;
   constructor(private fb: FormBuilder, private router: Router,
     private _auth: AuthService, private jwtService: JwtService) {
     sessionStorage.clear();

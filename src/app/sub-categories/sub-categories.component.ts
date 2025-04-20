@@ -1,18 +1,16 @@
-import { Component, Inject } from '@angular/core';
-import { ActivatedRoute, Route } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { HomeService } from '../services/home.service';
-import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
+import {  MatDialog } from '@angular/material/dialog';
 import { AddSubCategoriesComponent } from '../add-sub-categories/add-sub-categories.component';
-import { count } from 'rxjs';
 import { CartService } from '../services/cart.service';
-import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-sub-categories',
   templateUrl: './sub-categories.component.html',
   styleUrls: ['./sub-categories.component.css']
 })
-export class SubCategoriesComponent {
+export class SubCategoriesComponent implements OnInit {
   subCategoryItems: any = [];
   categoryTitle: string | null = null;
   isAdminLoggedin: any;
@@ -21,18 +19,17 @@ export class SubCategoriesComponent {
     private homeService: HomeService,
     private dialog: MatDialog,
     private cartService: CartService) { 
-       this.cartService.cartItems$.subscribe(items=>{
-           this.cartItems=items;
-          //  console.log(this.cartItems);
-           
-         })
+       
     }
 
   ngOnInit() {
-    this.isAdminLoggedin = sessionStorage.getItem('isAdminLoggedIn')
+    this.isAdminLoggedin = sessionStorage.getItem('isAdminLoggedIn');
+    this.cartService.cartItems$.subscribe(items=>{
+      this.cartItems=items;
+      
+    })
     this.route.paramMap.subscribe(params => {
       this.categoryTitle = params.get('category');
-      // console.log(this.categoryTitle);
       this.loadSubCategories();
 
     })
