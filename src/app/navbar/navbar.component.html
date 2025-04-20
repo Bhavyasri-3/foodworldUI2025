@@ -1,19 +1,4 @@
-<!-- <mat-toolbar *ngIf="ismenurequired" class="tool-bar">
-    <div *ngIf=isBackiconrequired class="back-icon">
-      <a routerLink="/home"><mat-icon>arrow_back</mat-icon></a>
-    </div>
-      <a>Hi,{{username}}!!</a>
-      <div *ngIf="isAdminLoggedin" class="admin-link">
-        <a routerLink="/user-details">User</a>
-      </div>   
-      <span class="title">FoodWorld</span>
-     <span class="example-spacer"></span> 
-     <a routerLink="/cart">
-      <mat-icon>add_shopping_cart</mat-icon>
-      <span class="badge">{{totalItemsCount}}</span>
-     </a>
-      <a (click)="logout()">Logout</a>
-  </mat-toolbar> -->
+
   <div class="hero_area">
     <div class="bg-box">
       <img src="../../assets/BG.jpg" alt="">
@@ -102,9 +87,10 @@
                 </g>
               </svg>
             </a>
-            <a (click)="logout()" class="order_online">
+            <a tabindex="0" (click)="logout()" (keydown.enter)="logout()" class="order_online">
               Logout
             </a>
+            
           </div>
         </div>
       </nav>
