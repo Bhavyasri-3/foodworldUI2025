@@ -1,7 +1,7 @@
 pipeline {
     agent any
     tools {
-        nodejs "Node 18"
+        nodejs "Node 20"
     }
 
     triggers {
