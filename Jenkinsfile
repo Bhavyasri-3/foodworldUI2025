@@ -5,9 +5,9 @@ pipeline {
         nodejs "Node 20"
     }
 
-    triggers {
-        cron('H * * * *')
-    }
+    // triggers {
+    //     cron('H * * * *')
+    // }
 
     environment {
         RENDER_DEPLOY_HOOK = 'https://api.render.com/deploy/srv-d02akf3e5dus73bj8b50?key=tKZT2bA5n2Q'
