@@ -87,9 +87,15 @@
                     </g>
                   </svg>
                 </a>
-                <a (click)="logout()" class="order_online">
-                  Logout
-                </a>
+                <a 
+  (click)="logout()" 
+  (keydown.enter)="logout()" 
+  tabindex="0" 
+  role="button" 
+  class="order_online">
+  Logout
+</a>
+
               </div>
             </div>
           </nav>
