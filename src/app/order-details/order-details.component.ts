@@ -111,26 +111,32 @@ export class OrderDetailsComponent implements OnInit {
     const today = new Date();
 
     switch (this.selectedFilter) {
-      case 'day':
+      case 'day':{
         params.startDate = this.formatDate(today);
         params.endDate = this.formatDate(today);
         break;
+      }
+       
 
-      case 'week':
+      case 'week':{
         const lastweek = new Date();
         lastweek.setDate(today.getDate() - 7);
         params.startDate = this.formatDate(lastweek);
         params.endDate = this.formatDate(today);
         break;
+      }
+        
 
-      case 'month':
+      case 'month':{
         const lastmonth = new Date();
         lastmonth.setDate(today.getDate() - 30);
         params.startDate = this.formatDate(lastmonth);
         params.endDate = this.formatDate(today);
         break;
+      }
+        
 
-      case 'custom':
+      case 'custom':{
         const startDate = this.dateForm.controls.startDate.value;
         const endDate = this.dateForm.controls.endDate.value;
 
@@ -142,6 +148,8 @@ export class OrderDetailsComponent implements OnInit {
         params.startDate = this.formatDate(startDate);
         params.endDate = this.formatDate(endDate);
         break;
+      }
+        
     }
   
     this.homeService.getFilteredOrders(params).subscribe({
