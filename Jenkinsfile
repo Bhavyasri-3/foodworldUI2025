@@ -13,11 +13,7 @@ pipeline {
     }
 
     stages {
-        stage('Checkout'){
-            steps{
-                git 'https://github.com/Bhavyasri-3/foodworldUI2025.git'
-            }
-        }
+        
 
         stage('Install Dependencies'){
             steps{
