@@ -1,3 +1,7 @@
+options{
+    skipDefaultCheckout()
+}
+
 pipeline {
     agent any
     tools {
