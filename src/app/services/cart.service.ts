@@ -76,3 +76,4 @@ export class CartService {
     this.totalItemsSubject.next(this.calculateTotalItemsCount());
   }
 }
+
